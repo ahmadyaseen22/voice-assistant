@@ -86,6 +86,7 @@ def main():
         if command:
             if "exit" in command or "stop" in command:
                 speak("Goodbye!")
+                print("Good Bye")
                 break
             else:
                 custom_response = get_custom_response(command)
