@@ -7,7 +7,6 @@ import os
 
 load_dotenv()
 
-
 # Initialize Text-to-Speech Engine
 engine = pyttsx3.init()
 engine.setProperty('rate', 150)  # Adjust speaking speed
@@ -15,12 +14,11 @@ engine.setProperty('rate', 150)  # Adjust speaking speed
 # Set Google Gemini API Key
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-
 WAKE_WORDS = ["hey assistant", "hello assistant"]
 
-#  Custom Responses 
+# Custom Responses
 CUSTOM_RESPONSES = {
-    
+    # Example: "how to buy a house": "You can start by checking your credit score and getting pre-approved for a mortgage."
 }
 
 def clean_text(text):
@@ -66,9 +64,10 @@ def ask_google_bard(question):
 def get_custom_response(query):
     """Check if query contains predefined customer support keywords."""
     for key, answer in CUSTOM_RESPONSES.items():
-        if key in query:  # ✅ This now works in lowercase, no need for exact match
+        if key in query:
             return answer
-    return None  # No match found
+    return None
+
 def wait_for_wake_word():
     """Wait for wake word once before starting the main loop"""
     speak("Hello, say 'Hey Assistant' to start.")
@@ -76,7 +75,7 @@ def wait_for_wake_word():
         wake_word = listen()
         if wake_word and any(ww in wake_word for ww in WAKE_WORDS):
             speak("Yes, I'm listening!")
-            return  # Exit function and start main interaction
+            return
 
 def main():
     """Main function to interact with the user"""
@@ -86,21 +85,14 @@ def main():
         command = listen()
         if command:
             if "exit" in command or "stop" in command:
-                speak("Are you sure you want to exit? Say yes to confirm.")
-                confirmation = listen()
-                if confirmation and "yes" in confirmation:
-                    speak("Goodbye!")
-                    break
-                else:
-                    speak("Okay, continuing.")
+                speak("Goodbye!")
+                break
             else:
-                # ✅ First, check if the command is in our predefined FAQs
                 custom_response = get_custom_response(command)
                 if custom_response:
                     print("AI:", custom_response)
                     speak(custom_response)
                 else:
-                    # If no predefined response, send to Google Gemini
                     response = ask_google_bard(command)
                     cleaned_response = clean_text(response)
                     print("AI:", cleaned_response)
@@ -110,24 +102,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
